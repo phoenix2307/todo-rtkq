@@ -20,6 +20,7 @@ export const todolistsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Todolist"],
     }),
+
     removeTodolist: build.mutation<BaseResponse, string>({
       query: (id) => ({
         url: `todo-lists/${id}`,
@@ -27,6 +28,7 @@ export const todolistsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Todolist"],
     }),
+
     updateTodolistTitle: build.mutation<BaseResponse, { id: string; title: string }>({
       query: ({ id, title }) => ({
         url: `todo-lists/${id}`,
