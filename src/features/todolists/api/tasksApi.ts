@@ -2,27 +2,31 @@ import { baseApi } from "@/app/baseApi"
 import { instance } from "@/common/instance"
 import type { BaseResponse } from "@/common/types"
 import type { DomainTask, GetTasksResponse, UpdateTaskModel } from "./tasksApi.types"
+import { PAGE_SIZE } from "@/common/constants"
 
 export const tasksApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getTasks: build.query<GetTasksResponse, string>({
-      query: (todolistId) => `todo-lists/${todolistId}/tasks`,
-      providesTags: (result, error, todolistId) => [{type: 'Task', id: todolistId}],
+    getTasks: build.query<GetTasksResponse, { todolistId: string; params: { page: number } }>({
+      query: ({ todolistId, params }) => ({
+        url: `todo-lists/${todolistId}/tasks`,
+        params: {...params, count: PAGE_SIZE},
+      }),
+      providesTags: (result, error, args) => [{ type: "Task", id: args.todolistId }],
     }),
     addTask: build.mutation<BaseResponse<{ item: DomainTask }>, { todolistId: string; title: string }>({
       query: ({ todolistId, title }) => ({
         url: `todo-lists/${todolistId}/tasks`,
         method: "POST",
-        body: { title }
+        body: { title },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: "Task", id: arg.todolistId }],
+      invalidatesTags: (result, error, args) => [{ type: "Task", id: args.todolistId }],
     }),
     removeTask: build.mutation<BaseResponse, { todolistId: string; taskId: string }>({
       query: ({ todolistId, taskId }) => ({
         url: `todo-lists/${todolistId}/tasks/${taskId}`,
-        method: "DELETE"
+        method: "DELETE",
       }),
-      invalidatesTags: (result, error, arg) => [{ type: "Task", id: arg.todolistId }]
+      invalidatesTags: (result, error, args) => [{ type: "Task", id: args.todolistId }],
     }),
     updateTask: build.mutation<
       BaseResponse<{ item: DomainTask }>,
@@ -31,11 +35,11 @@ export const tasksApi = baseApi.injectEndpoints({
       query: ({ todolistId, taskId, model }) => ({
         url: `todo-lists/${todolistId}/tasks/${taskId}`,
         method: "PUT",
-        body: model
+        body: model,
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Task", id: arg.todolistId }],
-    })
-  })
+    }),
+  }),
 })
 
 export const { useGetTasksQuery, useAddTaskMutation, useRemoveTaskMutation, useUpdateTaskMutation } = tasksApi
@@ -55,5 +59,5 @@ export const _tasksApi = {
   deleteTask(payload: { todolistId: string; taskId: string }) {
     const { todolistId, taskId } = payload
     return instance.delete<BaseResponse>(`/todo-lists/${todolistId}/tasks/${taskId}`)
-  }
+  },
 }
