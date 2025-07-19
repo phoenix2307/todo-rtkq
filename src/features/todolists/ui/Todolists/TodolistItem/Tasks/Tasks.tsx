@@ -17,7 +17,7 @@ export const Tasks = ({ todolist }: Props) => {
   const { id, filter } = todolist
   const [page, setPage] = useState(1)
 
-  const { data, isLoading, isFetching } = useGetTasksQuery({
+  const { data, isLoading } = useGetTasksQuery({
     todolistId: id,
     params: { page },
   })
