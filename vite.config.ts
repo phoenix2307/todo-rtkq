@@ -11,3 +11,5 @@ export default defineConfig({
     },
   },
 })
+
+//todo >>> встановив тільки локально gh-pages. Продовжити роботу
