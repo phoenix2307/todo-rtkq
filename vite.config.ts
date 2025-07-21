@@ -10,6 +10,7 @@ export default defineConfig({
       "@/": `${path.resolve(__dirname, "src")}/`,
     },
   },
+  base: '/todo-rtkq/'
 })
 
 //todo >>> встановив тільки локально gh-pages. Продовжити роботу
